@@ -1,5 +1,5 @@
-CFLAGS=c11 -g -static
-1cc: 1cc
+CFLAGS=-std=c11 -g -static
+1cc: 1cc.c
 test:1cc
 	./test.sh
 # bash -x test.sh when debag
