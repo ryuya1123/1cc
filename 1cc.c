@@ -162,21 +162,9 @@ Token *tokenize(char *p){
 Node *mul();
 Node *expr();
 Node *primary();
+Node *unary();
 
-Node *mul(){
-	Node *node = primary();
-
-	for(;;){
-		if(consume('*'))
-			node = new_node(ND_MUL, node, primary());
-		else if (consume('/'))
-			node = new_node(ND_DIV, node, primary());
-		else
-			return node;
-	}
-}
-
-
+// expr = mul("+" mul | "-" mul )*
 Node *expr(){
 	Node *node = mul();
 
@@ -190,6 +178,31 @@ Node *expr(){
 	}
 }
 
+// mul = unary("*" unary | "/" unary)*
+Node *mul(){
+	Node *node = unary();
+
+	for(;;){
+		if(consume('*'))
+			node = new_node(ND_MUL, node, unary());
+		else if (consume('/'))
+			node = new_node(ND_DIV, node, unary());
+		else
+			return node;
+	}
+}
+
+// unary = ("+" | "-")? unary
+//        | primary
+Node *unary(){
+	if(consume('+'))
+		return primary();
+	if (consume('-'))
+		return new_node(ND_SUB, new_node_num(0), unary());
+	return primary();
+}
+
+// primary = "(" expr ")" | num
 Node *primary(){
 	// 次のトークンが"("なら、"(" expr ")"のはず
 	if (consume('(')) {
