@@ -3,6 +3,8 @@
 char *user_input;
 Token *token;
 
+
+// Reports an error and exit.
 void error(char *fmt, ...){
 	va_list ap;
 	va_start(ap, fmt);
@@ -115,8 +117,13 @@ Token *tokenize(){
 		}
 
 		// Identifier
-		if('a'<= *p && *p <= 'z'){
-			cur = new_token(TK_IDENT, cur, p++, single_punctuator);
+		if(is_alpha(*p)){
+			char *q = p++;
+			while (is_alnum(*p)){
+				p++;
+			}
+
+			cur = new_token(TK_IDENT, cur, q, p-q);
 			continue;
 		}
 

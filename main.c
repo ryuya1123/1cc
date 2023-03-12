@@ -7,9 +7,17 @@ int main(int argc, char **argv){
 	// Doing tokenize to parse
 	user_input = argv[1];
 	token = tokenize();
-	Node *node = program();
+	Function *prog = program();
+
+	// Assign offsets to local variables
+	int offset = 0;
+	for(LVar *lvar=prog->locals; lvar; lvar=lvar->next){
+		offset += 8;
+		lvar->offset = offset;
+	}
+	prog->stack_size = offset;
 
 	// Traverse the AST to emit assembly
-	codegen(node);
+	codegen(prog);
 	return 0;
 }
